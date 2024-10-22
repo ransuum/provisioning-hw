@@ -18,12 +18,17 @@ public class ConfigFileGenerator {
     }
 
     public String generateConfigFile(Map<String, Object> data, Device.DeviceModel model) {
-        if (model == Device.DeviceModel.DESK) return generatePropertyFile(data);
-        else if (model == Device.DeviceModel.CONFERENCE) return generateJsonFile(data);
-        throw new UnsupportedOperationException("Unsupported device model: " + model);
+       switch (model){
+           case DESK :
+               return generateProperty(data);
+           case CONFERENCE :
+               return generateJson(data);
+           default :
+               throw new UnsupportedOperationException("Unsupported device model: " + model);
+       }
     }
 
-    private String generatePropertyFile(Map<String, Object> data) {
+    private String generateProperty(Map<String, Object> data) {
         StringBuilder sb = new StringBuilder();
         data.forEach((field, value) -> {
             sb.append(field).append("=").append(value).append("\n");
@@ -31,7 +36,7 @@ public class ConfigFileGenerator {
         return sb.toString();
     }
 
-    private String generateJsonFile(Map<String, Object> data) {
+    private String generateJson(Map<String, Object> data) {
         try {
             if (data.containsKey("codecs")) {
                 String codecsString = data.get("codecs").toString();
