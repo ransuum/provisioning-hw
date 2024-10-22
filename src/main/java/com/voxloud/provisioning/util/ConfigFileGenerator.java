@@ -19,12 +19,9 @@ public class ConfigFileGenerator {
 
     public String generateConfigFile(Map<String, Object> data, Device.DeviceModel model) {
        switch (model){
-           case DESK :
-               return generateProperty(data);
-           case CONFERENCE :
-               return generateJson(data);
-           default :
-               throw new UnsupportedOperationException("Unsupported device model: " + model);
+           case DESK : return generateProperty(data);
+           case CONFERENCE : return generateJson(data);
+           default : throw new UnsupportedOperationException("Unsupported device model: " + model);
        }
     }
 

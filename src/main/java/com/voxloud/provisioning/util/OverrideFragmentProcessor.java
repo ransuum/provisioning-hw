@@ -31,8 +31,7 @@ public class OverrideFragmentProcessor {
                 data.put("domain", (!domain.trim().isEmpty()) ? domain.trim() : null);
                 data.put("port", (!port.trim().isEmpty()) ? port.trim() : null);
                 data.put("timeout", (!timeout.trim().isEmpty()) ? timeout.trim() : null);
-            } else if (model == Device.DeviceModel.CONFERENCE)
-                data.putAll(this.objectMapper.readValue(overrideFragment, Map.class));
+            } else data.putAll(this.objectMapper.readValue(overrideFragment, Map.class));
         } catch (IOException e) {
             throw new GeneratingFileException("Error applying override fragment", e);
         }
