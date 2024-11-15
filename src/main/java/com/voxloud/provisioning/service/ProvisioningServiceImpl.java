@@ -10,14 +10,16 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class ProvisioningServiceImpl implements ProvisioningService {
 
     private final DeviceRepository deviceRepository;
     private final OverrideFragmentProcessor overrideFragmentProcessor;
-    private final ConfigFileGenerator configFileGenerator;
+    private final Map<Device.DeviceModel, ConfigFileGenerator> configFileGenerators;
 
     @Value("${provisioning.domain}")
     private String domain;
@@ -28,11 +30,10 @@ public class ProvisioningServiceImpl implements ProvisioningService {
     @Value("${provisioning.codecs}")
     private String codecs;
 
-    public ProvisioningServiceImpl(DeviceRepository deviceRepository, OverrideFragmentProcessor overrideFragmentProcessor,
-                                   ConfigFileGenerator configFileGenerator) {
+    public ProvisioningServiceImpl(DeviceRepository deviceRepository, OverrideFragmentProcessor overrideFragmentProcessor, List<ConfigFileGenerator> configFileGenerators) {
         this.deviceRepository = deviceRepository;
         this.overrideFragmentProcessor = overrideFragmentProcessor;
-        this.configFileGenerator = configFileGenerator;
+        this.configFileGenerators = configFileGenerators.stream().collect(Collectors.toMap(ConfigFileGenerator::getDeviceModel, cfg -> cfg));
     }
 
     @Override
@@ -52,6 +53,6 @@ public class ProvisioningServiceImpl implements ProvisioningService {
             this.overrideFragmentProcessor.applyOverrideFragment(data, device.getOverrideFragment(), device.getModel());
 
 
-        return this.configFileGenerator.generateConfigFile(data, device.getModel());
+        return this.configFileGenerators.get(device.getModel()).generateConfigFile(data);
     }
 }
